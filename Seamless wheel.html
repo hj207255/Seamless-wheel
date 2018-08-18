@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的无缝轮播</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        div{
+            box-sizing: border-box;
+        }
+        body{
+            position: relative;
+        }
+        .window{
+            width: 400px;
+            height: 600px;
+            overflow: hidden;
+            margin: 10px auto;
+            position: relative;
+        }
+        .window img{
+            position: absolute;
+            transition: all .5s;
+        }
+        .window img.current{
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .window img.enter{
+            top: 0;
+            left: 100%;
+        }
+        .window img.leave{
+            top: 0;
+            left: -100%;
+        }
+        .bar {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 550px;
+            width: 117px;
+            height: 19px;
+            border-radius: 15px;
+            z-index: 999;
+            background: rgba(255,255,255,.2);
+        }
+        .bar span{
+            display: inline-block;
+            line-height: 20px;
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            margin: 2px 10px;
+            background: rgba(255,255,255,.3);
+            vertical-align: top;
+        }
+        .bar span.gl{
+            background: rgba(255,255,255,.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <img src="iron1.jpg" alt="" width="400px" height="600px">
+        <img src="iron2.jpg" alt="" width="400px" height="600px">
+        <img src="iron3.jpg" alt="" width="400px" height="600px">
+    </div>
+    <div class="bar">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-git.js"></script>
+    <script>
+        //定义初始状态
+        $('.window>img:nth-child(1)').addClass('current');
+        $('.window>img:nth-child(2)').addClass('enter');
+        $('.window>img:nth-child(3)').addClass('enter');
+        $('.bar>span:nth-child(1)').addClass('gl');
+        //设置定时器，自动轮播
+        var x=1;
+        var y=2;
+        var timeId=setInterval(function () {
+            $(`.window>img:nth-child(${xn(x)})`).removeClass('current').addClass('leave')
+                .one('transitionend',function (x) {
+                    $(x.currentTarget).removeClass('leave').addClass('enter')
+                });
+            $(`.window>img:nth-child(${yn(y)})`).removeClass('enter').addClass('current');
+            $(`.bar>span:nth-child(${xn(x)})`).removeClass('gl');
+            $(`.bar>span:nth-child(${yn(y)})`).addClass('gl');
+            x=x+1;
+            y=y+1
+        },1000);
+
+        //添加鼠标进入暂停，移出继续
+        $(".window").on("mouseenter",function(){
+            window.clearInterval(timeId)
+        });
+        $(".window").on("mouseleave",function(){
+            timeId=setInterval(function () {
+                $(`.window>img:nth-child(${xn(x)})`).removeClass('current').addClass('leave')
+                    .one('transitionend',function (x) {
+                        $(x.currentTarget).removeClass('leave').addClass('enter')
+                    });
+                $(`.window>img:nth-child(${yn(y)})`).removeClass('enter').addClass('current');
+                $(`.bar>span:nth-child(${xn(x)})`).removeClass('gl');
+                $(`.bar>span:nth-child(${yn(y)})`).addClass('gl');
+                x=x+1;
+                y=y+1
+            },1000)
+        });
+/****************************************************************************************/
+        //设置x，y函数 使x按照1 2 3 1 2 3 而y按照2 3 1 2 3 1顺序进行
+        function xn(x) {
+            if (x>3){
+                x=x%3;
+                if (x===0){
+                    x=3
+                }
+            }
+           return x
+        }
+        function yn(y) {
+            if (y>3){
+                y=y%3;
+                if (y===0){
+                    y=3
+                }
+            }
+            return y
+        }
+    </script>
+</body>
+</html>

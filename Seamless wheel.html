@@ -98,6 +98,25 @@
             x=x+1;
             y=y+1
         },1000);
+        
+        //解决不看该页面时出现的bug
+        document.addEventListener('visibilitychange',function(){
+           if (document.hidden){
+               window.clearInterval(timeId)
+           }else{
+               timeId=setInterval(function () {
+                   $(`.window>img:nth-child(${xn(x)})`).removeClass('current').addClass('leave')
+                       .one('transitionend',function (x) {
+                           $(x.currentTarget).removeClass('leave').addClass('enter')
+                       });
+                   $(`.window>img:nth-child(${yn(y)})`).removeClass('enter').addClass('current');
+                   $(`.bar>span:nth-child(${xn(x)})`).removeClass('gl');
+                   $(`.bar>span:nth-child(${yn(y)})`).addClass('gl');
+                   x=x+1;
+                   y=y+1
+               },1000);
+           }
+        });
 
         //添加鼠标进入暂停，移出继续
         $(".window").on("mouseenter",function(){
